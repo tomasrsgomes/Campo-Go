@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Defs_VP3A" targetNamespace="http://ams.tecnico/exange/grupo29" exporter="Camunda Modeler" exporterVersion="5.51.1">
+  <bpmn:message id="Msg_Plano" name="Xoperation-plan" />
+  <bpmn:message id="Msg_RelX" name="Relatório da missão" />
+  <bpmn:message id="Msg_RelS" name="Relatório do SERVplan" />
+  <bpmn:category id="Cat_Fases">
+    <bpmn:categoryValue id="CV_0" value="Preparação (na Xoperation-base)" />
+    <bpmn:categoryValue id="CV_1" value="Deslocação" />
+    <bpmn:categoryValue id="CV_2" value="Operações na Xstation" />
+    <bpmn:categoryValue id="CV_3" value="Regresso e fecho" />
+  </bpmn:category>
+  <bpmn:collaboration id="Collab_VP3A">
+    <bpmn:participant id="Pool_XopTeam" name="Xoperation-team" processRef="Proc_Missao" />
+    <bpmn:participant id="Participant_0t09yma" name="Xmiddle" processRef="Process_0e782z2" />
+    <bpmn:participant id="Participant_04bufav" name="SAV / SAVapp" processRef="Process_0cy8jvn" />
+    <bpmn:participant id="Participant_1l2dwe0" name="Xstation" processRef="Process_1yvuug7" />
+    <bpmn:messageFlow id="Flow_16at2sl" name="Xoperation-plan" sourceRef="Participant_0t09yma" targetRef="Start_Plano" />
+    <bpmn:messageFlow id="Flow_19q32qo" name="Pedido de Teste" sourceRef="T_InstrTeste" targetRef="Participant_0t09yma" />
+    <bpmn:messageFlow id="Flow_1cegcoz" name="Resultado do Teste" sourceRef="Participant_0t09yma" targetRef="T_Teste" />
+    <bpmn:messageFlow id="Flow_045jp3d" name="Submeter Relatório" sourceRef="T_RelX" targetRef="Participant_0t09yma" />
+    <bpmn:messageFlow id="Flow_1awumoo" name="Pedido de SERVplan" sourceRef="T_ConsServ" targetRef="Participant_04bufav" />
+    <bpmn:messageFlow id="Flow_0qqcxax" name="Informação do SERVplan" sourceRef="Participant_04bufav" targetRef="T_ConsServ" />
+    <bpmn:messageFlow id="Flow_127fns2" name="Submeter Relatório" sourceRef="T_RelS" targetRef="Participant_04bufav" />
+    <bpmn:messageFlow id="Flow_14xmz4h" name="Comando / Pedido de Teste" sourceRef="Participant_0t09yma" targetRef="Participant_1l2dwe0" />
+    <bpmn:messageFlow id="Flow_080wyex" name="Resultado do Teste / Evento de Estado" sourceRef="Participant_1l2dwe0" targetRef="Participant_0t09yma" />
+    <bpmn:group id="Grp_0" categoryValueRef="CV_0" />
+    <bpmn:group id="Grp_1" categoryValueRef="CV_1" />
+    <bpmn:group id="Grp_2" categoryValueRef="CV_2" />
+    <bpmn:group id="Grp_3" categoryValueRef="CV_3" />
+  </bpmn:collaboration>
+  <bpmn:process id="Proc_Missao" name="VP3-A Missão" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_Aux" name="Auxiliar">
+        <bpmn:flowNodeRef>T_Carregar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_CorrCarga</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_PACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Enc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Reportar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Teste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_CorrOps</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Descarregar</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Mot" name="Motorista">
+        <bpmn:flowNodeRef>T_Conduzir1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Chegada1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Conduzir2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Chegada2</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Coord" name="Coordenador">
+        <bpmn:flowNodeRef>Start_Plano</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_InstrPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_ConsServ</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_InstrEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_M1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_VerifPrep</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Prep</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_SolCorr1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_AutPartida</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_P1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Briefing</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_J1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_InstrOps</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_P2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Manut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_J2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_M2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_InstrTeste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Teste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_RepManut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_M3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_VerifOps</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Ops</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_SolCorr2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_AutRegresso</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_InstrDesc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_RelS</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_RelX</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1rqgpxk</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start_Plano" name="Xoperation-plan recebido">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:outgoing>F_Start_Plano_T_InstrPACK</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_Start_Plano" messageRef="Msg_Plano" />
+    </bpmn:startEvent>
+    <bpmn:task id="T_InstrPACK" name="Instruir carga das PACK vazias">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_Start_Plano_T_InstrPACK</bpmn:incoming>
+      <bpmn:outgoing>F_T_InstrPACK_T_ConsServ</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="T_ConsServ" name="Consultar SERVplan (SAVapp)">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_InstrPACK_T_ConsServ</bpmn:incoming>
+      <bpmn:outgoing>F_T_ConsServ_T_InstrEnc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="T_InstrEnc" name="Instruir carga das Encomendas de Serviço">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_ConsServ_T_InstrEnc</bpmn:incoming>
+      <bpmn:outgoing>F_T_InstrEnc_T_Carregar</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="T_Carregar" name="Carregar veículo">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_InstrEnc_T_Carregar</bpmn:incoming>
+      <bpmn:outgoing>F_T_Carregar_G_M1</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="G_M1">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Carregar_G_M1</bpmn:incoming>
+      <bpmn:incoming>F_T_CorrCarga_G_M1</bpmn:incoming>
+      <bpmn:outgoing>F_G_M1_T_VerifPrep</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="T_VerifPrep" name="Verificar preparação">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_M1_T_VerifPrep</bpmn:incoming>
+      <bpmn:outgoing>F_T_VerifPrep_G_Prep</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="G_Prep" name="Preparação correta?">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_VerifPrep_G_Prep</bpmn:incoming>
+      <bpmn:outgoing>F_G_Prep_T_AutPartida</bpmn:outgoing>
+      <bpmn:outgoing>F_G_Prep_T_SolCorr1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="T_SolCorr1" name="Solicitar correções">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_Prep_T_SolCorr1</bpmn:incoming>
+      <bpmn:outgoing>F_T_SolCorr1_T_CorrCarga</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="T_CorrCarga" name="Corrigir carregamento">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_SolCorr1_T_CorrCarga</bpmn:incoming>
+      <bpmn:outgoing>F_T_CorrCarga_G_M1</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:task id="T_AutPartida" name="Autorizar partida">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_Prep_T_AutPartida</bpmn:incoming>
+      <bpmn:outgoing>F_T_AutPartida_G_P1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="G_P1">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_AutPartida_G_P1</bpmn:incoming>
+      <bpmn:outgoing>F_G_P1_T_Conduzir1</bpmn:outgoing>
+      <bpmn:outgoing>F_G_P1_T_Briefing</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:manualTask id="T_Conduzir1" name="Conduzir até à Xstation">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_P1_T_Conduzir1</bpmn:incoming>
+      <bpmn:outgoing>F_T_Conduzir1_T_Chegada1</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:task id="T_Briefing" name="Instruir auxiliar sobre operações na Xstation">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_P1_T_Briefing</bpmn:incoming>
+      <bpmn:outgoing>F_T_Briefing_G_J1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="T_Chegada1" name="Informar chegada à Xstation">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Conduzir1_T_Chegada1</bpmn:incoming>
+      <bpmn:outgoing>F_T_Chegada1_G_J1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="G_J1">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Chegada1_G_J1</bpmn:incoming>
+      <bpmn:incoming>F_T_Briefing_G_J1</bpmn:incoming>
+      <bpmn:outgoing>F_G_J1_T_InstrOps</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="T_InstrOps" name="Instruir início das operações">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_J1_T_InstrOps</bpmn:incoming>
+      <bpmn:outgoing>F_T_InstrOps_G_P2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="G_P2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_InstrOps_G_P2</bpmn:incoming>
+      <bpmn:outgoing>F_G_P2_T_PACK</bpmn:outgoing>
+      <bpmn:outgoing>F_G_P2_T_Manut</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:manualTask id="T_PACK" name="Fornecer e recolher PACK vazias">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_P2_T_PACK</bpmn:incoming>
+      <bpmn:outgoing>F_T_PACK_T_Enc</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="T_Enc" name="Entregar e recolher Encomendas de Serviço">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_PACK_T_Enc</bpmn:incoming>
+      <bpmn:outgoing>F_T_Enc_T_Reportar</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:task id="T_Reportar" name="Reportar conclusão ao coordenador">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Enc_T_Reportar</bpmn:incoming>
+      <bpmn:outgoing>F_T_Reportar_G_J2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="T_Manut" name="Executar ações de manutenção preventiva">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_P2_T_Manut</bpmn:incoming>
+      <bpmn:outgoing>F_T_Manut_G_J2</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" />
+    </bpmn:manualTask>
+    <bpmn:parallelGateway id="G_J2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Reportar_G_J2</bpmn:incoming>
+      <bpmn:incoming>F_T_Manut_G_J2</bpmn:incoming>
+      <bpmn:outgoing>F_G_J2_G_M2</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="G_M2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_J2_G_M2</bpmn:incoming>
+      <bpmn:incoming>F_T_RepManut_G_M2</bpmn:incoming>
+      <bpmn:outgoing>F_G_M2_T_InstrTeste</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="T_InstrTeste" name="Instruir teste à Xstation">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_M2_T_InstrTeste</bpmn:incoming>
+      <bpmn:outgoing>F_T_InstrTeste_T_Teste</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="T_Teste" name="Executar teste (Xmiddle-smart) e comunicar resultado">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_InstrTeste_T_Teste</bpmn:incoming>
+      <bpmn:outgoing>F_T_Teste_G_Teste</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="G_Teste" name="Teste bem-sucedido?">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Teste_G_Teste</bpmn:incoming>
+      <bpmn:outgoing>F_G_Teste_T_RepManut</bpmn:outgoing>
+      <bpmn:outgoing>F_G_Teste_G_M3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="T_RepManut" name="Repetir ações de manutenção necessárias">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_Teste_T_RepManut</bpmn:incoming>
+      <bpmn:outgoing>F_T_RepManut_G_M2</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="G_M3">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_Teste_G_M3</bpmn:incoming>
+      <bpmn:incoming>F_T_CorrOps_G_M3</bpmn:incoming>
+      <bpmn:outgoing>F_G_M3_T_VerifOps</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="T_VerifOps" name="Verificar resultado das operações">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_M3_T_VerifOps</bpmn:incoming>
+      <bpmn:outgoing>F_T_VerifOps_G_Ops</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="G_Ops" name="Operações corretas?">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_VerifOps_G_Ops</bpmn:incoming>
+      <bpmn:outgoing>F_G_Ops_T_AutRegresso</bpmn:outgoing>
+      <bpmn:outgoing>F_G_Ops_T_SolCorr2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="T_SolCorr2" name="Solicitar correções">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_Ops_T_SolCorr2</bpmn:incoming>
+      <bpmn:outgoing>F_T_SolCorr2_T_CorrOps</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="T_CorrOps" name="Corrigir operações">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_SolCorr2_T_CorrOps</bpmn:incoming>
+      <bpmn:outgoing>F_T_CorrOps_G_M3</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:task id="T_AutRegresso" name="Autorizar regresso">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>F_G_Ops_T_AutRegresso</bpmn:incoming>
+      <bpmn:outgoing>F_T_AutRegresso_T_Conduzir2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="T_Conduzir2" name="Conduzir até à Xoperation-base">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_AutRegresso_T_Conduzir2</bpmn:incoming>
+      <bpmn:outgoing>F_T_Conduzir2_T_Chegada2</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:task id="T_Chegada2" name="Informar chegada à Xoperation-base">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Conduzir2_T_Chegada2</bpmn:incoming>
+      <bpmn:outgoing>F_T_Chegada2_T_InstrDesc</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="T_InstrDesc" name="Instruir descarga">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Chegada2_T_InstrDesc</bpmn:incoming>
+      <bpmn:outgoing>F_T_InstrDesc_T_Descarregar</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="T_Descarregar" name="Descarregar Encomendas e PACK recolhidas">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_InstrDesc_T_Descarregar</bpmn:incoming>
+      <bpmn:outgoing>F_T_Descarregar_G_P3</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sendTask id="T_RelS" name="Submeter relatório ao SAV (SAVapp)" messageRef="Msg_RelS">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>Flow_0ihedyg</bpmn:incoming>
+      <bpmn:outgoing>F_T_RelS_G_J3</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="End" name="Missão terminada">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_RelS_G_J3</bpmn:incoming>
+      <bpmn:incoming>Flow_1fnshi6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="T_RelX" name="Submeter relatório à Xmiddle (Xoperation-app)" messageRef="Msg_RelX">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>F_T_Descarregar_G_P3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0n7lrws</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="Gateway_1rqgpxk" name="há SERVplan?">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+      <bpmn:incoming>Flow_0n7lrws</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ihedyg</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1fnshi6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="F_Start_Plano_T_InstrPACK" sourceRef="Start_Plano" targetRef="T_InstrPACK">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_InstrPACK_T_ConsServ" sourceRef="T_InstrPACK" targetRef="T_ConsServ">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_ConsServ_T_InstrEnc" sourceRef="T_ConsServ" targetRef="T_InstrEnc">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_InstrEnc_T_Carregar" sourceRef="T_InstrEnc" targetRef="T_Carregar">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Carregar_G_M1" sourceRef="T_Carregar" targetRef="G_M1">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_CorrCarga_G_M1" sourceRef="T_CorrCarga" targetRef="G_M1">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_M1_T_VerifPrep" sourceRef="G_M1" targetRef="T_VerifPrep">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_VerifPrep_G_Prep" sourceRef="T_VerifPrep" targetRef="G_Prep">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_Prep_T_AutPartida" name="sim" sourceRef="G_Prep" targetRef="T_AutPartida">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_Prep_T_SolCorr1" name="não" sourceRef="G_Prep" targetRef="T_SolCorr1">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_SolCorr1_T_CorrCarga" sourceRef="T_SolCorr1" targetRef="T_CorrCarga">
+      <bpmn:categoryValueRef>CV_0</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_AutPartida_G_P1" sourceRef="T_AutPartida" targetRef="G_P1" />
+    <bpmn:sequenceFlow id="F_G_P1_T_Conduzir1" sourceRef="G_P1" targetRef="T_Conduzir1">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_P1_T_Briefing" sourceRef="G_P1" targetRef="T_Briefing">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Conduzir1_T_Chegada1" sourceRef="T_Conduzir1" targetRef="T_Chegada1">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Briefing_G_J1" sourceRef="T_Briefing" targetRef="G_J1">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Chegada1_G_J1" sourceRef="T_Chegada1" targetRef="G_J1">
+      <bpmn:categoryValueRef>CV_1</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_J1_T_InstrOps" sourceRef="G_J1" targetRef="T_InstrOps" />
+    <bpmn:sequenceFlow id="F_T_InstrOps_G_P2" sourceRef="T_InstrOps" targetRef="G_P2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_P2_T_PACK" sourceRef="G_P2" targetRef="T_PACK">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_P2_T_Manut" sourceRef="G_P2" targetRef="T_Manut">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_PACK_T_Enc" sourceRef="T_PACK" targetRef="T_Enc">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Enc_T_Reportar" sourceRef="T_Enc" targetRef="T_Reportar">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Reportar_G_J2" sourceRef="T_Reportar" targetRef="G_J2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Manut_G_J2" sourceRef="T_Manut" targetRef="G_J2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_J2_G_M2" sourceRef="G_J2" targetRef="G_M2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_RepManut_G_M2" sourceRef="T_RepManut" targetRef="G_M2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_M2_T_InstrTeste" sourceRef="G_M2" targetRef="T_InstrTeste">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_InstrTeste_T_Teste" sourceRef="T_InstrTeste" targetRef="T_Teste">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Teste_G_Teste" sourceRef="T_Teste" targetRef="G_Teste">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_Teste_T_RepManut" name="não" sourceRef="G_Teste" targetRef="T_RepManut">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_Teste_G_M3" name="sim" sourceRef="G_Teste" targetRef="G_M3">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_CorrOps_G_M3" sourceRef="T_CorrOps" targetRef="G_M3">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_M3_T_VerifOps" sourceRef="G_M3" targetRef="T_VerifOps">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_VerifOps_G_Ops" sourceRef="T_VerifOps" targetRef="G_Ops">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_G_Ops_T_AutRegresso" name="sim" sourceRef="G_Ops" targetRef="T_AutRegresso" />
+    <bpmn:sequenceFlow id="F_G_Ops_T_SolCorr2" name="não" sourceRef="G_Ops" targetRef="T_SolCorr2">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_SolCorr2_T_CorrOps" sourceRef="T_SolCorr2" targetRef="T_CorrOps">
+      <bpmn:categoryValueRef>CV_2</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_AutRegresso_T_Conduzir2" sourceRef="T_AutRegresso" targetRef="T_Conduzir2">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Conduzir2_T_Chegada2" sourceRef="T_Conduzir2" targetRef="T_Chegada2">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Chegada2_T_InstrDesc" sourceRef="T_Chegada2" targetRef="T_InstrDesc">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_InstrDesc_T_Descarregar" sourceRef="T_InstrDesc" targetRef="T_Descarregar">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_Descarregar_G_P3" sourceRef="T_Descarregar" targetRef="T_RelX">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ihedyg" name="sim" sourceRef="Gateway_1rqgpxk" targetRef="T_RelS">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_T_RelS_G_J3" sourceRef="T_RelS" targetRef="End">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1fnshi6" name="não" sourceRef="Gateway_1rqgpxk" targetRef="End">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0n7lrws" sourceRef="T_RelX" targetRef="Gateway_1rqgpxk">
+      <bpmn:categoryValueRef>CV_3</bpmn:categoryValueRef>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmn:process id="Process_0e782z2" isExecutable="false" />
+  <bpmn:process id="Process_0cy8jvn" isExecutable="false" />
+  <bpmn:process id="Process_1yvuug7" isExecutable="false" />
+  <bpmndi:BPMNDiagram id="Diag_VP3A">
+    <bpmndi:BPMNPlane id="Plane_VP3A" bpmnElement="Collab_VP3A">
+      <bpmndi:BPMNShape id="Pool_XopTeam_di" bpmnElement="Pool_XopTeam" isHorizontal="true">
+        <dc:Bounds x="160" y="820" width="5110" height="700" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Aux_di" bpmnElement="Lane_Aux" isHorizontal="true">
+        <dc:Bounds x="190" y="1330" width="5080" height="190" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Mot_di" bpmnElement="Lane_Mot" isHorizontal="true">
+        <dc:Bounds x="190" y="1180" width="5080" height="150" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Coord_di" bpmnElement="Lane_Coord" isHorizontal="true">
+        <dc:Bounds x="190" y="820" width="5080" height="360" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_Plano_di" bpmnElement="Start_Plano">
+        <dc:Bounds x="242" y="992" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="221" y="1034" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_InstrPACK_di" bpmnElement="T_InstrPACK">
+        <dc:Bounds x="349" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_ConsServ_di" bpmnElement="T_ConsServ">
+        <dc:Bounds x="494" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_InstrEnc_di" bpmnElement="T_InstrEnc">
+        <dc:Bounds x="639" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Carregar_di" bpmnElement="T_Carregar">
+        <dc:Bounds x="784" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_M1_di" bpmnElement="G_M1" isMarkerVisible="true">
+        <dc:Bounds x="960" y="985" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_VerifPrep_di" bpmnElement="T_VerifPrep">
+        <dc:Bounds x="1074" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Prep_di" bpmnElement="G_Prep" isMarkerVisible="true">
+        <dc:Bounds x="1250" y="985" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1225" y="951" width="101" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_SolCorr1_di" bpmnElement="T_SolCorr1">
+        <dc:Bounds x="1219" y="1080" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_CorrCarga_di" bpmnElement="T_CorrCarga">
+        <dc:Bounds x="1074" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_AutPartida_di" bpmnElement="T_AutPartida">
+        <dc:Bounds x="1364" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_P1_di" bpmnElement="G_P1">
+        <dc:Bounds x="1540" y="985" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Conduzir1_di" bpmnElement="T_Conduzir1">
+        <dc:Bounds x="1654" y="1215" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Briefing_di" bpmnElement="T_Briefing">
+        <dc:Bounds x="1727" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Chegada1_di" bpmnElement="T_Chegada1">
+        <dc:Bounds x="1799" y="1215" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_J1_di" bpmnElement="G_J1">
+        <dc:Bounds x="1975" y="985" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_InstrOps_di" bpmnElement="T_InstrOps">
+        <dc:Bounds x="2089" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_P2_di" bpmnElement="G_P2">
+        <dc:Bounds x="2265" y="985" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_PACK_di" bpmnElement="T_PACK">
+        <dc:Bounds x="2379" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Enc_di" bpmnElement="T_Enc">
+        <dc:Bounds x="2524" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Reportar_di" bpmnElement="T_Reportar">
+        <dc:Bounds x="2669" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Manut_di" bpmnElement="T_Manut">
+        <dc:Bounds x="2524" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_J2_di" bpmnElement="G_J2">
+        <dc:Bounds x="2845" y="985" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_M2_di" bpmnElement="G_M2" isMarkerVisible="true">
+        <dc:Bounds x="2990" y="985" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_InstrTeste_di" bpmnElement="T_InstrTeste">
+        <dc:Bounds x="3104" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Teste_di" bpmnElement="T_Teste">
+        <dc:Bounds x="3249" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Teste_di" bpmnElement="G_Teste" isMarkerVisible="true">
+        <dc:Bounds x="3425" y="985" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3398" y="1041" width="105" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_RepManut_di" bpmnElement="T_RepManut">
+        <dc:Bounds x="3249" y="840" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_M3_di" bpmnElement="G_M3" isMarkerVisible="true">
+        <dc:Bounds x="3570" y="985" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_VerifOps_di" bpmnElement="T_VerifOps">
+        <dc:Bounds x="3684" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Ops_di" bpmnElement="G_Ops" isMarkerVisible="true">
+        <dc:Bounds x="3860" y="985" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3834" y="951" width="103" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_SolCorr2_di" bpmnElement="T_SolCorr2">
+        <dc:Bounds x="3829" y="1080" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_CorrOps_di" bpmnElement="T_CorrOps">
+        <dc:Bounds x="3684" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_AutRegresso_di" bpmnElement="T_AutRegresso">
+        <dc:Bounds x="3974" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Conduzir2_di" bpmnElement="T_Conduzir2">
+        <dc:Bounds x="4119" y="1215" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Chegada2_di" bpmnElement="T_Chegada2">
+        <dc:Bounds x="4264" y="1215" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_InstrDesc_di" bpmnElement="T_InstrDesc">
+        <dc:Bounds x="4409" y="970" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_Descarregar_di" bpmnElement="T_Descarregar">
+        <dc:Bounds x="4554" y="1385" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_RelS_di" bpmnElement="T_RelS">
+        <dc:Bounds x="4844" y="1080" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="5192" y="992" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5166" y="968" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_RelX_di" bpmnElement="T_RelX">
+        <dc:Bounds x="4844" y="870" width="112" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1rqgpxk_di" bpmnElement="Gateway_1rqgpxk" isMarkerVisible="true">
+        <dc:Bounds x="4875" y="985" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4794" y="990" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F_Start_Plano_T_InstrPACK_di" bpmnElement="F_Start_Plano_T_InstrPACK">
+        <di:waypoint x="278" y="1010" />
+        <di:waypoint x="349" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_InstrPACK_T_ConsServ_di" bpmnElement="F_T_InstrPACK_T_ConsServ">
+        <di:waypoint x="461" y="1010" />
+        <di:waypoint x="494" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_ConsServ_T_InstrEnc_di" bpmnElement="F_T_ConsServ_T_InstrEnc">
+        <di:waypoint x="606" y="1010" />
+        <di:waypoint x="639" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_InstrEnc_T_Carregar_di" bpmnElement="F_T_InstrEnc_T_Carregar">
+        <di:waypoint x="751" y="1010" />
+        <di:waypoint x="767.5" y="1010" />
+        <di:waypoint x="767.5" y="1425" />
+        <di:waypoint x="784" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Carregar_G_M1_di" bpmnElement="F_T_Carregar_G_M1">
+        <di:waypoint x="896" y="1425" />
+        <di:waypoint x="928" y="1425" />
+        <di:waypoint x="928" y="1010" />
+        <di:waypoint x="960" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_CorrCarga_G_M1_di" bpmnElement="F_T_CorrCarga_G_M1">
+        <di:waypoint x="1074" y="1425" />
+        <di:waypoint x="985" y="1425" />
+        <di:waypoint x="985" y="1035" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_M1_T_VerifPrep_di" bpmnElement="F_G_M1_T_VerifPrep">
+        <di:waypoint x="1010" y="1010" />
+        <di:waypoint x="1074" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_VerifPrep_G_Prep_di" bpmnElement="F_T_VerifPrep_G_Prep">
+        <di:waypoint x="1186" y="1010" />
+        <di:waypoint x="1250" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_Prep_T_AutPartida_di" bpmnElement="F_G_Prep_T_AutPartida">
+        <di:waypoint x="1300" y="1010" />
+        <di:waypoint x="1364" y="1010" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1327" y="990" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_Prep_T_SolCorr1_di" bpmnElement="F_G_Prep_T_SolCorr1">
+        <di:waypoint x="1275" y="1035" />
+        <di:waypoint x="1275" y="1080" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1284" y="1051" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_SolCorr1_T_CorrCarga_di" bpmnElement="F_T_SolCorr1_T_CorrCarga">
+        <di:waypoint x="1275" y="1160" />
+        <di:waypoint x="1275" y="1425" />
+        <di:waypoint x="1186" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_AutPartida_G_P1_di" bpmnElement="F_T_AutPartida_G_P1">
+        <di:waypoint x="1476" y="1010" />
+        <di:waypoint x="1540" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_P1_T_Conduzir1_di" bpmnElement="F_G_P1_T_Conduzir1">
+        <di:waypoint x="1565" y="1035" />
+        <di:waypoint x="1565" y="1255" />
+        <di:waypoint x="1654" y="1255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_P1_T_Briefing_di" bpmnElement="F_G_P1_T_Briefing">
+        <di:waypoint x="1590" y="1010" />
+        <di:waypoint x="1726.5" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Conduzir1_T_Chegada1_di" bpmnElement="F_T_Conduzir1_T_Chegada1">
+        <di:waypoint x="1766" y="1255" />
+        <di:waypoint x="1799" y="1255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Briefing_G_J1_di" bpmnElement="F_T_Briefing_G_J1">
+        <di:waypoint x="1838.5" y="1010" />
+        <di:waypoint x="1975" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Chegada1_G_J1_di" bpmnElement="F_T_Chegada1_G_J1">
+        <di:waypoint x="1911" y="1255" />
+        <di:waypoint x="2000" y="1255" />
+        <di:waypoint x="2000" y="1035" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_J1_T_InstrOps_di" bpmnElement="F_G_J1_T_InstrOps">
+        <di:waypoint x="2025" y="1010" />
+        <di:waypoint x="2089" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_InstrOps_G_P2_di" bpmnElement="F_T_InstrOps_G_P2">
+        <di:waypoint x="2201" y="1010" />
+        <di:waypoint x="2265" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_P2_T_PACK_di" bpmnElement="F_G_P2_T_PACK">
+        <di:waypoint x="2290" y="1035" />
+        <di:waypoint x="2290" y="1425" />
+        <di:waypoint x="2379" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_P2_T_Manut_di" bpmnElement="F_G_P2_T_Manut">
+        <di:waypoint x="2315" y="1010" />
+        <di:waypoint x="2524" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_PACK_T_Enc_di" bpmnElement="F_T_PACK_T_Enc">
+        <di:waypoint x="2491" y="1425" />
+        <di:waypoint x="2524" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Enc_T_Reportar_di" bpmnElement="F_T_Enc_T_Reportar">
+        <di:waypoint x="2636" y="1425" />
+        <di:waypoint x="2669" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Reportar_G_J2_di" bpmnElement="F_T_Reportar_G_J2">
+        <di:waypoint x="2781" y="1425" />
+        <di:waypoint x="2870" y="1425" />
+        <di:waypoint x="2870" y="1035" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Manut_G_J2_di" bpmnElement="F_T_Manut_G_J2">
+        <di:waypoint x="2636" y="1010" />
+        <di:waypoint x="2845" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_J2_G_M2_di" bpmnElement="F_G_J2_G_M2">
+        <di:waypoint x="2895" y="1010" />
+        <di:waypoint x="2990" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_RepManut_G_M2_di" bpmnElement="F_T_RepManut_G_M2">
+        <di:waypoint x="3249" y="880" />
+        <di:waypoint x="3015" y="880" />
+        <di:waypoint x="3015" y="985" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_M2_T_InstrTeste_di" bpmnElement="F_G_M2_T_InstrTeste">
+        <di:waypoint x="3040" y="1010" />
+        <di:waypoint x="3104" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_InstrTeste_T_Teste_di" bpmnElement="F_T_InstrTeste_T_Teste">
+        <di:waypoint x="3216" y="1010" />
+        <di:waypoint x="3232.5" y="1010" />
+        <di:waypoint x="3232.5" y="1425" />
+        <di:waypoint x="3249" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Teste_G_Teste_di" bpmnElement="F_T_Teste_G_Teste">
+        <di:waypoint x="3361" y="1425" />
+        <di:waypoint x="3393" y="1425" />
+        <di:waypoint x="3393" y="1010" />
+        <di:waypoint x="3425" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_Teste_T_RepManut_di" bpmnElement="F_G_Teste_T_RepManut">
+        <di:waypoint x="3450" y="985" />
+        <di:waypoint x="3450" y="880" />
+        <di:waypoint x="3361" y="880" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3459" y="926" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_Teste_G_M3_di" bpmnElement="F_G_Teste_G_M3">
+        <di:waypoint x="3475" y="1010" />
+        <di:waypoint x="3570" y="1010" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3518" y="990" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_CorrOps_G_M3_di" bpmnElement="F_T_CorrOps_G_M3">
+        <di:waypoint x="3684" y="1425" />
+        <di:waypoint x="3595" y="1425" />
+        <di:waypoint x="3595" y="1035" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_M3_T_VerifOps_di" bpmnElement="F_G_M3_T_VerifOps">
+        <di:waypoint x="3620" y="1010" />
+        <di:waypoint x="3684" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_VerifOps_G_Ops_di" bpmnElement="F_T_VerifOps_G_Ops">
+        <di:waypoint x="3796" y="1010" />
+        <di:waypoint x="3860" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_Ops_T_AutRegresso_di" bpmnElement="F_G_Ops_T_AutRegresso">
+        <di:waypoint x="3910" y="1010" />
+        <di:waypoint x="3974" y="1010" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3937" y="990" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_G_Ops_T_SolCorr2_di" bpmnElement="F_G_Ops_T_SolCorr2">
+        <di:waypoint x="3885" y="1035" />
+        <di:waypoint x="3885" y="1080" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3894" y="1051" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_SolCorr2_T_CorrOps_di" bpmnElement="F_T_SolCorr2_T_CorrOps">
+        <di:waypoint x="3885" y="1160" />
+        <di:waypoint x="3885" y="1425" />
+        <di:waypoint x="3796" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_AutRegresso_T_Conduzir2_di" bpmnElement="F_T_AutRegresso_T_Conduzir2">
+        <di:waypoint x="4086" y="1010" />
+        <di:waypoint x="4102.5" y="1010" />
+        <di:waypoint x="4102.5" y="1255" />
+        <di:waypoint x="4119" y="1255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Conduzir2_T_Chegada2_di" bpmnElement="F_T_Conduzir2_T_Chegada2">
+        <di:waypoint x="4231" y="1255" />
+        <di:waypoint x="4264" y="1255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Chegada2_T_InstrDesc_di" bpmnElement="F_T_Chegada2_T_InstrDesc">
+        <di:waypoint x="4376" y="1255" />
+        <di:waypoint x="4392.5" y="1255" />
+        <di:waypoint x="4392.5" y="1010" />
+        <di:waypoint x="4409" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_InstrDesc_T_Descarregar_di" bpmnElement="F_T_InstrDesc_T_Descarregar">
+        <di:waypoint x="4521" y="1010" />
+        <di:waypoint x="4537.5" y="1010" />
+        <di:waypoint x="4537.5" y="1425" />
+        <di:waypoint x="4554" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_Descarregar_G_P3_di" bpmnElement="F_T_Descarregar_G_P3">
+        <di:waypoint x="4666" y="1425" />
+        <di:waypoint x="4698" y="1425" />
+        <di:waypoint x="4698" y="910" />
+        <di:waypoint x="4844" y="910" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F_T_RelS_G_J3_di" bpmnElement="F_T_RelS_G_J3">
+        <di:waypoint x="4956" y="1120" />
+        <di:waypoint x="5210" y="1120" />
+        <di:waypoint x="5210" y="1028" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n7lrws_di" bpmnElement="Flow_0n7lrws">
+        <di:waypoint x="4900" y="950" />
+        <di:waypoint x="4900" y="985" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ihedyg_di" bpmnElement="Flow_0ihedyg">
+        <di:waypoint x="4900" y="1035" />
+        <di:waypoint x="4900" y="1080" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4871" y="1050.5" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fnshi6_di" bpmnElement="Flow_1fnshi6">
+        <di:waypoint x="4925" y="1010" />
+        <di:waypoint x="5192" y="1010" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4950" y="990" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0t09yma_di" bpmnElement="Participant_0t09yma" isHorizontal="true">
+        <dc:Bounds x="160" y="450" width="5110" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_1l2dwe0_di" bpmnElement="Participant_1l2dwe0" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="5110" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_04bufav_di" bpmnElement="Participant_04bufav" isHorizontal="true">
+        <dc:Bounds x="160" y="1640" width="5110" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_16at2sl_di" bpmnElement="Flow_16at2sl">
+        <di:waypoint x="260" y="700" />
+        <di:waypoint x="260" y="992" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="271" y="703" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qqcxax_di" bpmnElement="Flow_0qqcxax">
+        <di:waypoint x="570" y="1640" />
+        <di:waypoint x="570" y="1050" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="574" y="1607" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1awumoo_di" bpmnElement="Flow_1awumoo">
+        <di:waypoint x="530" y="1050" />
+        <di:waypoint x="530" y="1640" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="452" y="1055" width="95" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19q32qo_di" bpmnElement="Flow_19q32qo">
+        <di:waypoint x="3160" y="970" />
+        <di:waypoint x="3160" y="700" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3070" y="951" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cegcoz_di" bpmnElement="Flow_1cegcoz">
+        <di:waypoint x="3250" y="700" />
+        <di:waypoint x="3250" y="1390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3257" y="706" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_045jp3d_di" bpmnElement="Flow_045jp3d">
+        <di:waypoint x="4899" y="870" />
+        <di:waypoint x="4899" y="700" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4836" y="842" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_127fns2_di" bpmnElement="Flow_127fns2">
+        <di:waypoint x="4946" y="1160" />
+        <di:waypoint x="4946" y="1640" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4956" y="1153" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14xmz4h_di" bpmnElement="Flow_14xmz4h">
+        <di:waypoint x="3161" y="450" />
+        <di:waypoint x="3161" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3070" y="416" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_080wyex_di" bpmnElement="Flow_080wyex">
+        <di:waypoint x="3250" y="330" />
+        <di:waypoint x="3250" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3258" y="336" width="163" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Grp_0_di" bpmnElement="Grp_0">
+        <dc:Bounds x="198" y="826" width="1287" height="688" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="799" y="826" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Grp_1_di" bpmnElement="Grp_1">
+        <dc:Bounds x="1500" y="826" width="565" height="688" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1754" y="826" width="58" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Grp_2_di" bpmnElement="Grp_2">
+        <dc:Bounds x="2080" y="826" width="1870" height="688" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2980" y="826" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Grp_3_di" bpmnElement="Grp_3">
+        <dc:Bounds x="3965" y="826" width="1297" height="688" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4570" y="826" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
