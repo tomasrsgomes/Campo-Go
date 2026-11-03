@@ -1,0 +1,1287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_VP3A" targetNamespace="https://ams.tecnico/exange/grupo29/vp3a" exporter="Camunda Modeler" exporterVersion="5.51.1">
+  <bpmn:collaboration id="Collaboration_VP3A">
+    <bpmn:participant id="Pool_XoperationTeam" name="Xoperation-team" processRef="Process_VP3A" />
+    <bpmn:textAnnotation id="Annotation_NotaVista_VP3A">
+      <bpmn:text>VP3-A: processo privado da missão. Âmbito: missão a uma Xstation, com qualquer combinação de ações de PACK e manutenção e SERVplan opcional; é a mesma variante do VP3-B. Xmiddle, SAV e Xstation ficam fora do processo: as trocas com eles aparecem como tarefas de envio e eventos de receção, sem pools. Pressupostos: a ausência de SERVplan é conhecida na consulta; o teste é feito depois das ações aplicáveis; só se volta à manutenção quando o teste falha; há sempre relatório para a Xmiddle e só há relatório para o SAV se foi executado um SERVplan. Omissões: avarias, acidentes e erros humanos; conteúdo do protocolo de teste e dos relatórios; logística das PACK vazias depois da chegada à base. Relações: VP3-B, VP2 (Xoperation-app) e VP7 (SERVplan). Em aberto: o teste é obrigatório numa missão sem manutenção?</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_VP3A" name="VP3-A / Xoperation-team / Missão" isExecutable="false">
+    <bpmn:documentation>VP3-A | Processo privado da missão, numa única pool Xoperation-team com lanes Coordenador, Motorista e Auxiliar. Derivado do VP3-B: as instruções e confirmações entre papéis da equipa passam a fluxos de sequência entre lanes (as tarefas de envio/receção e eventos de confirmação internos deixam de existir). Xmiddle, SAV e Xstation estão fora do processo e não são representados como pools; as trocas com eles mantêm-se como evento de início de mensagem (Xoperation-plan), tarefas de envio (consulta SERVplan, pedido de teste, relatórios) e eventos de receção, sem message flows. Junto da Xstation, o coordenador instrui primeiro as operações físicas, se previstas, e só depois executa a manutenção, em paralelo com as operações do auxiliar; ambos sincronizam antes do teste, como no VP3-B. Âmbito: missão para uma Xstation; combinações não vazias de PACK e manutenção; SERVplan opcional. Pressupostos: SERVplan disponível ou ausência conhecida na consulta; teste após ações aplicáveis; retorno à manutenção apenas por falha de teste; relatório Xmiddle sempre e SAV se executado SERVplan. Na base, só se explicita a descarga de Encomendas recolhidas; logística posterior das PACK fora do âmbito. Alinhado com VP3-B. Data objects: Xoperation-plan, SERVplan e relatórios; gateways do auxiliar nomeados por tipo de ação.</bpmn:documentation>
+    <bpmn:laneSet id="LaneSet_VP3A">
+      <bpmn:lane id="Lane_Coordenador" name="Coordenador">
+        <bpmn:flowNodeRef>C_Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Decision_CargaPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_CarregarPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Merge_CargaPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_ConsultarSERV</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_ReceberSERV</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Decision_CargaEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_CarregarEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Merge_CargaEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_MergePrep</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_VerificarPrep</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_PrepCorreta</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_CorrigirCarga</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Partida</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_ForkViagem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Briefing</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_JoinViagem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Fork_Xstation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_HaManut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Manut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_MergeManut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_HaOperacoes</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Operacoes</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Merge_Ops</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Join_Xstation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_MergeTeste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Teste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_TesteOK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_RepetirManut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_MergeVerifOps</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_VerificarOps</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_OpsCorretas</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_CorrigirOps</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_Regresso</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Decision_DescargaEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_DescarregarEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Merge_DescargaEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_RelX</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Decision_RelSAV</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_RelS</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Merge_RelSAV</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_End</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Merge_Instr</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>C_HaOps2</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Motorista" name="Motorista">
+        <bpmn:flowNodeRef>M_ConduzirIda</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>M_ConduzirBase</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Auxiliar" name="Auxiliar">
+        <bpmn:flowNodeRef>A_Do_CarregarPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Do_CarregarEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Do_CorrigirCarga</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_If_FornecerPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_FornecerPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Merge_FornecerPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_If_RecolherPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_RecolherPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Merge_RecolherPACK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_If_EntregarEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_EntregarEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Merge_EntregarEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_If_RecolherEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_RecolherEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Merge_RecolherEnc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_PedirTeste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_ReceberTeste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Do_CorrigirOps</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A_Do_DescarregarEnc</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:dataObject id="DO_Plan" name="Xoperation-plan" />
+    <bpmn:dataObjectReference id="DOR_Plan" name="Xoperation-plan" dataObjectRef="DO_Plan" />
+    <bpmn:dataObject id="DO_ServPlan" name="SERVplan" />
+    <bpmn:dataObjectReference id="DOR_ServPlan" name="SERVplan" dataObjectRef="DO_ServPlan" />
+    <bpmn:dataObject id="DO_RelX" name="Relatório da missão" />
+    <bpmn:dataObjectReference id="DOR_RelX" name="Relatório da missão" dataObjectRef="DO_RelX" />
+    <bpmn:dataObject id="DO_RelS" name="Relatório SAV" />
+    <bpmn:dataObjectReference id="DOR_RelS" name="Relatório SAV" dataObjectRef="DO_RelS" />
+    <bpmn:startEvent id="C_Start" name="Xoperation-plan recebido">
+      <bpmn:outgoing>Flow_A_01</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DA_Plan_out">
+        <bpmn:targetRef>DOR_Plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:messageEventDefinition id="Definition_C_Start" messageRef="Message_C_Start" />
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Decision_CargaPACK" name="Plano prevê fornecer PACK?" default="Flow_A_03">
+      <bpmn:incoming>Flow_A_01</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_02</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_03</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_CarregarPACK" name="Instruir carga das PACK previstas">
+      <bpmn:incoming>Flow_A_02</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_04</bpmn:outgoing>
+      <bpmn:dataInputAssociation id="DA_Plan_in">
+        <bpmn:sourceRef>DOR_Plan</bpmn:sourceRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:task>
+    <bpmn:manualTask id="A_Do_CarregarPACK" name="Carregar PACK vazias previstas">
+      <bpmn:incoming>Flow_A_04</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_05</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="Merge_CargaPACK" name="">
+      <bpmn:incoming>Flow_A_03</bpmn:incoming>
+      <bpmn:incoming>Flow_A_05</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_06</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="C_ConsultarSERV" name="Consultar SERVplan (SAVapp)">
+      <bpmn:incoming>Flow_A_06</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_07</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="C_ReceberSERV" name="SERVplan ou ausência recebida">
+      <bpmn:incoming>Flow_A_07</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_08</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DA_Serv_out">
+        <bpmn:targetRef>DOR_ServPlan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:messageEventDefinition id="Definition_C_ReceberSERV" messageRef="Message_C_ReceberSERV" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="Decision_CargaEnc" name="SERVplan prevê entregas?" default="Flow_A_10">
+      <bpmn:incoming>Flow_A_08</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_09</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_CarregarEnc" name="Instruir carga das Encomendas previstas">
+      <bpmn:incoming>Flow_A_09</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_11</bpmn:outgoing>
+      <bpmn:dataInputAssociation id="DA_Serv_in">
+        <bpmn:sourceRef>DOR_ServPlan</bpmn:sourceRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:task>
+    <bpmn:manualTask id="A_Do_CarregarEnc" name="Carregar Encomendas previstas">
+      <bpmn:incoming>Flow_A_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_12</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="Merge_CargaEnc" name="">
+      <bpmn:incoming>Flow_A_10</bpmn:incoming>
+      <bpmn:incoming>Flow_A_12</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_13</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="C_MergePrep" name="">
+      <bpmn:incoming>Flow_A_13</bpmn:incoming>
+      <bpmn:incoming>Flow_A_18</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_14</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_VerificarPrep" name="Verificar preparação">
+      <bpmn:incoming>Flow_A_14</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_15</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="C_PrepCorreta" name="Preparação correta?" default="Flow_A_16">
+      <bpmn:incoming>Flow_A_15</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_16</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_19</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_CorrigirCarga" name="Solicitar correções da preparação">
+      <bpmn:incoming>Flow_A_16</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_17</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="A_Do_CorrigirCarga" name="Corrigir preparação conforme instruções">
+      <bpmn:incoming>Flow_A_17</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_18</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:task id="C_Partida" name="Autorizar partida para a Xstation">
+      <bpmn:incoming>Flow_A_19</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_20</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="C_ForkViagem" name="">
+      <bpmn:incoming>Flow_A_20</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_21</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_23</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="C_Briefing" name="Instruir operações durante a deslocação">
+      <bpmn:incoming>Flow_A_21</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_22</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="M_ConduzirIda" name="Conduzir até à Xstation">
+      <bpmn:incoming>Flow_A_23</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_24</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:parallelGateway id="C_JoinViagem" name="">
+      <bpmn:incoming>Flow_A_22</bpmn:incoming>
+      <bpmn:incoming>Flow_A_24</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_25</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Fork_Xstation">
+      <bpmn:outgoing>Flow_A_26</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_31</bpmn:outgoing>
+      <bpmn:incoming>Flow_A_81</bpmn:incoming>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="C_HaManut" name="Há manutenção prevista?" default="Flow_A_28">
+      <bpmn:incoming>Flow_A_26</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_27</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_28</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="C_Manut" name="Executar ações de manutenção, uma de cada vez">
+      <bpmn:documentation>Ações previstas no Xoperation-plan; repetição sequencial da atividade para cada ação.</bpmn:documentation>
+      <bpmn:incoming>Flow_A_27</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_29</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" />
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="C_MergeManut" name="">
+      <bpmn:incoming>Flow_A_28</bpmn:incoming>
+      <bpmn:incoming>Flow_A_29</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_30</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="C_HaOperacoes" name="Há operações físicas previstas?" default="Flow_A_80">
+      <bpmn:incoming>Flow_A_25</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_32</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_80</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_Operacoes" name="Instruir operações físicas previstas">
+      <bpmn:incoming>Flow_A_32</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_34</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="A_If_FornecerPACK" name="Fornecimento de PACK previsto?" default="Flow_A_37">
+      <bpmn:outgoing>Flow_A_35</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_37</bpmn:outgoing>
+      <bpmn:incoming>Flow_A_82</bpmn:incoming>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="A_FornecerPACK" name="Fornecer PACK vazias">
+      <bpmn:incoming>Flow_A_35</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_36</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="A_Merge_FornecerPACK" name="">
+      <bpmn:incoming>Flow_A_36</bpmn:incoming>
+      <bpmn:incoming>Flow_A_37</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_38</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="A_If_RecolherPACK" name="Recolha de PACK prevista?" default="Flow_A_41">
+      <bpmn:incoming>Flow_A_38</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_39</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_41</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="A_RecolherPACK" name="Recolher PACK vazias">
+      <bpmn:incoming>Flow_A_39</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_40</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="A_Merge_RecolherPACK" name="">
+      <bpmn:incoming>Flow_A_40</bpmn:incoming>
+      <bpmn:incoming>Flow_A_41</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_42</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="A_If_EntregarEnc" name="Entrega de Encomendas prevista?" default="Flow_A_45">
+      <bpmn:incoming>Flow_A_42</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_43</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_45</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="A_EntregarEnc" name="Entregar Encomendas de Serviço">
+      <bpmn:incoming>Flow_A_43</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_44</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="A_Merge_EntregarEnc" name="">
+      <bpmn:incoming>Flow_A_44</bpmn:incoming>
+      <bpmn:incoming>Flow_A_45</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_46</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="A_If_RecolherEnc" name="Recolha de Encomendas prevista?" default="Flow_A_49">
+      <bpmn:incoming>Flow_A_46</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_47</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_49</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="A_RecolherEnc" name="Recolher Encomendas de Serviço">
+      <bpmn:incoming>Flow_A_47</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_48</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="A_Merge_RecolherEnc" name="">
+      <bpmn:incoming>Flow_A_48</bpmn:incoming>
+      <bpmn:incoming>Flow_A_49</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_50</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Merge_Ops">
+      <bpmn:incoming>Flow_A_33</bpmn:incoming>
+      <bpmn:incoming>Flow_A_50</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_51</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="Join_Xstation">
+      <bpmn:incoming>Flow_A_30</bpmn:incoming>
+      <bpmn:incoming>Flow_A_51</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_52</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="C_MergeTeste" name="">
+      <bpmn:incoming>Flow_A_52</bpmn:incoming>
+      <bpmn:incoming>Flow_A_58</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_53</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_Teste" name="Instruir auxiliar para testar a Xstation">
+      <bpmn:incoming>Flow_A_53</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_54</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sendTask id="A_PedirTeste" name="Pedir teste via Xoperation-app">
+      <bpmn:incoming>Flow_A_54</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_55</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="A_ReceberTeste" name="Resultado automatizado recebido">
+      <bpmn:incoming>Flow_A_55</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_56</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="Definition_A_ReceberTeste" messageRef="Message_A_ReceberTeste" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="C_TesteOK" name="Teste bem-sucedido?" default="Flow_A_57">
+      <bpmn:incoming>Flow_A_56</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_57</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_59</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="C_RepetirManut" name="Determinar e executar ações de manutenção necessárias">
+      <bpmn:documentation>Em caso de falha, determinar as ações necessárias e executá-las consecutivamente; repetir o teste de seguida.</bpmn:documentation>
+      <bpmn:incoming>Flow_A_57</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_58</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" />
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="C_MergeVerifOps" name="">
+      <bpmn:incoming>Flow_A_59</bpmn:incoming>
+      <bpmn:incoming>Flow_A_64</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_60</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_VerificarOps" name="Verificar resultado global das operações">
+      <bpmn:incoming>Flow_A_60</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_61</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="C_OpsCorretas" name="Operações corretas?" default="Flow_A_62">
+      <bpmn:incoming>Flow_A_61</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_62</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_65</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_CorrigirOps" name="Solicitar correções das operações físicas">
+      <bpmn:incoming>Flow_A_62</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_63</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="A_Do_CorrigirOps" name="Corrigir operações físicas conforme instruções">
+      <bpmn:incoming>Flow_A_63</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_64</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:task id="C_Regresso" name="Autorizar regresso à Xoperation-base">
+      <bpmn:incoming>Flow_A_65</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_66</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="M_ConduzirBase" name="Conduzir até à Xoperation-base">
+      <bpmn:incoming>Flow_A_66</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_67</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="Decision_DescargaEnc" name="Foram recolhidas Encomendas?" default="Flow_A_69">
+      <bpmn:incoming>Flow_A_67</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_68</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_69</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="C_DescarregarEnc" name="Instruir descarga das Encomendas recolhidas">
+      <bpmn:incoming>Flow_A_68</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_70</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:manualTask id="A_Do_DescarregarEnc" name="Descarregar Encomendas recolhidas">
+      <bpmn:incoming>Flow_A_70</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_71</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="Merge_DescargaEnc" name="">
+      <bpmn:incoming>Flow_A_69</bpmn:incoming>
+      <bpmn:incoming>Flow_A_71</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_72</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="C_RelX" name="Submeter relatório da missão (Xoperation-app)">
+      <bpmn:incoming>Flow_A_72</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_73</bpmn:outgoing>
+      <bpmn:dataInputAssociation id="DA_RelX_in">
+        <bpmn:sourceRef>DOR_RelX</bpmn:sourceRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="Decision_RelSAV" name="Foi executado SERVplan?" default="Flow_A_75">
+      <bpmn:incoming>Flow_A_73</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_74</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_75</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="C_RelS" name="Submeter relatório SAV (SAVapp)">
+      <bpmn:incoming>Flow_A_74</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_76</bpmn:outgoing>
+      <bpmn:dataInputAssociation id="DA_RelS_in">
+        <bpmn:sourceRef>DOR_RelS</bpmn:sourceRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="Merge_RelSAV" name="">
+      <bpmn:incoming>Flow_A_75</bpmn:incoming>
+      <bpmn:incoming>Flow_A_76</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_77</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="C_End" name="Missão terminada">
+      <bpmn:incoming>Flow_A_77</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Merge_Instr">
+      <bpmn:incoming>Flow_A_34</bpmn:incoming>
+      <bpmn:incoming>Flow_A_80</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_81</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="C_HaOps2" name="Há operações físicas previstas?" default="Flow_A_33">
+      <bpmn:incoming>Flow_A_31</bpmn:incoming>
+      <bpmn:outgoing>Flow_A_33</bpmn:outgoing>
+      <bpmn:outgoing>Flow_A_82</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_A_01" sourceRef="C_Start" targetRef="Decision_CargaPACK" />
+    <bpmn:sequenceFlow id="Flow_A_02" name="sim" sourceRef="Decision_CargaPACK" targetRef="C_CarregarPACK">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">pack_fornecer</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_03" name="não" sourceRef="Decision_CargaPACK" targetRef="Merge_CargaPACK" />
+    <bpmn:sequenceFlow id="Flow_A_04" sourceRef="C_CarregarPACK" targetRef="A_Do_CarregarPACK" />
+    <bpmn:sequenceFlow id="Flow_A_05" sourceRef="A_Do_CarregarPACK" targetRef="Merge_CargaPACK" />
+    <bpmn:sequenceFlow id="Flow_A_06" sourceRef="Merge_CargaPACK" targetRef="C_ConsultarSERV" />
+    <bpmn:sequenceFlow id="Flow_A_07" sourceRef="C_ConsultarSERV" targetRef="C_ReceberSERV" />
+    <bpmn:sequenceFlow id="Flow_A_08" sourceRef="C_ReceberSERV" targetRef="Decision_CargaEnc" />
+    <bpmn:sequenceFlow id="Flow_A_09" name="sim" sourceRef="Decision_CargaEnc" targetRef="C_CarregarEnc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">serv_entregar</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_10" name="não" sourceRef="Decision_CargaEnc" targetRef="Merge_CargaEnc" />
+    <bpmn:sequenceFlow id="Flow_A_11" sourceRef="C_CarregarEnc" targetRef="A_Do_CarregarEnc" />
+    <bpmn:sequenceFlow id="Flow_A_12" sourceRef="A_Do_CarregarEnc" targetRef="Merge_CargaEnc" />
+    <bpmn:sequenceFlow id="Flow_A_13" sourceRef="Merge_CargaEnc" targetRef="C_MergePrep" />
+    <bpmn:sequenceFlow id="Flow_A_14" sourceRef="C_MergePrep" targetRef="C_VerificarPrep" />
+    <bpmn:sequenceFlow id="Flow_A_15" sourceRef="C_VerificarPrep" targetRef="C_PrepCorreta" />
+    <bpmn:sequenceFlow id="Flow_A_16" name="não" sourceRef="C_PrepCorreta" targetRef="C_CorrigirCarga" />
+    <bpmn:sequenceFlow id="Flow_A_17" sourceRef="C_CorrigirCarga" targetRef="A_Do_CorrigirCarga" />
+    <bpmn:sequenceFlow id="Flow_A_18" sourceRef="A_Do_CorrigirCarga" targetRef="C_MergePrep" />
+    <bpmn:sequenceFlow id="Flow_A_19" name="sim" sourceRef="C_PrepCorreta" targetRef="C_Partida">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">prep_correta</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_20" sourceRef="C_Partida" targetRef="C_ForkViagem" />
+    <bpmn:sequenceFlow id="Flow_A_21" sourceRef="C_ForkViagem" targetRef="C_Briefing" />
+    <bpmn:sequenceFlow id="Flow_A_22" sourceRef="C_Briefing" targetRef="C_JoinViagem" />
+    <bpmn:sequenceFlow id="Flow_A_23" sourceRef="C_ForkViagem" targetRef="M_ConduzirIda" />
+    <bpmn:sequenceFlow id="Flow_A_24" sourceRef="M_ConduzirIda" targetRef="C_JoinViagem" />
+    <bpmn:sequenceFlow id="Flow_A_25" sourceRef="C_JoinViagem" targetRef="C_HaOperacoes" />
+    <bpmn:sequenceFlow id="Flow_A_26" sourceRef="Fork_Xstation" targetRef="C_HaManut" />
+    <bpmn:sequenceFlow id="Flow_A_27" name="sim" sourceRef="C_HaManut" targetRef="C_Manut">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">manutencao</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_28" name="não" sourceRef="C_HaManut" targetRef="C_MergeManut" />
+    <bpmn:sequenceFlow id="Flow_A_29" sourceRef="C_Manut" targetRef="C_MergeManut" />
+    <bpmn:sequenceFlow id="Flow_A_30" sourceRef="C_MergeManut" targetRef="Join_Xstation" />
+    <bpmn:sequenceFlow id="Flow_A_31" sourceRef="Fork_Xstation" targetRef="C_HaOps2" />
+    <bpmn:sequenceFlow id="Flow_A_32" name="sim" sourceRef="C_HaOperacoes" targetRef="C_Operacoes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">ha_operacoes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_33" name="não" sourceRef="C_HaOps2" targetRef="Merge_Ops" />
+    <bpmn:sequenceFlow id="Flow_A_34" sourceRef="C_Operacoes" targetRef="Merge_Instr" />
+    <bpmn:sequenceFlow id="Flow_A_35" name="sim" sourceRef="A_If_FornecerPACK" targetRef="A_FornecerPACK">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">pack_fornecer</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_36" sourceRef="A_FornecerPACK" targetRef="A_Merge_FornecerPACK" />
+    <bpmn:sequenceFlow id="Flow_A_37" name="não" sourceRef="A_If_FornecerPACK" targetRef="A_Merge_FornecerPACK" />
+    <bpmn:sequenceFlow id="Flow_A_38" sourceRef="A_Merge_FornecerPACK" targetRef="A_If_RecolherPACK" />
+    <bpmn:sequenceFlow id="Flow_A_39" name="sim" sourceRef="A_If_RecolherPACK" targetRef="A_RecolherPACK">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">pack_recolher</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_40" sourceRef="A_RecolherPACK" targetRef="A_Merge_RecolherPACK" />
+    <bpmn:sequenceFlow id="Flow_A_41" name="não" sourceRef="A_If_RecolherPACK" targetRef="A_Merge_RecolherPACK" />
+    <bpmn:sequenceFlow id="Flow_A_42" sourceRef="A_Merge_RecolherPACK" targetRef="A_If_EntregarEnc" />
+    <bpmn:sequenceFlow id="Flow_A_43" name="sim" sourceRef="A_If_EntregarEnc" targetRef="A_EntregarEnc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">serv_entregar</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_44" sourceRef="A_EntregarEnc" targetRef="A_Merge_EntregarEnc" />
+    <bpmn:sequenceFlow id="Flow_A_45" name="não" sourceRef="A_If_EntregarEnc" targetRef="A_Merge_EntregarEnc" />
+    <bpmn:sequenceFlow id="Flow_A_46" sourceRef="A_Merge_EntregarEnc" targetRef="A_If_RecolherEnc" />
+    <bpmn:sequenceFlow id="Flow_A_47" name="sim" sourceRef="A_If_RecolherEnc" targetRef="A_RecolherEnc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">serv_recolher</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_48" sourceRef="A_RecolherEnc" targetRef="A_Merge_RecolherEnc" />
+    <bpmn:sequenceFlow id="Flow_A_49" name="não" sourceRef="A_If_RecolherEnc" targetRef="A_Merge_RecolherEnc" />
+    <bpmn:sequenceFlow id="Flow_A_50" sourceRef="A_Merge_RecolherEnc" targetRef="Merge_Ops" />
+    <bpmn:sequenceFlow id="Flow_A_51" sourceRef="Merge_Ops" targetRef="Join_Xstation" />
+    <bpmn:sequenceFlow id="Flow_A_52" sourceRef="Join_Xstation" targetRef="C_MergeTeste" />
+    <bpmn:sequenceFlow id="Flow_A_53" sourceRef="C_MergeTeste" targetRef="C_Teste" />
+    <bpmn:sequenceFlow id="Flow_A_54" sourceRef="C_Teste" targetRef="A_PedirTeste" />
+    <bpmn:sequenceFlow id="Flow_A_55" sourceRef="A_PedirTeste" targetRef="A_ReceberTeste" />
+    <bpmn:sequenceFlow id="Flow_A_56" sourceRef="A_ReceberTeste" targetRef="C_TesteOK" />
+    <bpmn:sequenceFlow id="Flow_A_57" name="não" sourceRef="C_TesteOK" targetRef="C_RepetirManut" />
+    <bpmn:sequenceFlow id="Flow_A_58" sourceRef="C_RepetirManut" targetRef="C_MergeTeste" />
+    <bpmn:sequenceFlow id="Flow_A_59" name="sim" sourceRef="C_TesteOK" targetRef="C_MergeVerifOps">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">teste_ok</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_60" sourceRef="C_MergeVerifOps" targetRef="C_VerificarOps" />
+    <bpmn:sequenceFlow id="Flow_A_61" sourceRef="C_VerificarOps" targetRef="C_OpsCorretas" />
+    <bpmn:sequenceFlow id="Flow_A_62" name="não" sourceRef="C_OpsCorretas" targetRef="C_CorrigirOps" />
+    <bpmn:sequenceFlow id="Flow_A_63" sourceRef="C_CorrigirOps" targetRef="A_Do_CorrigirOps" />
+    <bpmn:sequenceFlow id="Flow_A_64" sourceRef="A_Do_CorrigirOps" targetRef="C_MergeVerifOps" />
+    <bpmn:sequenceFlow id="Flow_A_65" name="sim" sourceRef="C_OpsCorretas" targetRef="C_Regresso">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">ops_corretas</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_66" sourceRef="C_Regresso" targetRef="M_ConduzirBase" />
+    <bpmn:sequenceFlow id="Flow_A_67" sourceRef="M_ConduzirBase" targetRef="Decision_DescargaEnc" />
+    <bpmn:sequenceFlow id="Flow_A_68" name="sim" sourceRef="Decision_DescargaEnc" targetRef="C_DescarregarEnc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">serv_recolher</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_69" name="não" sourceRef="Decision_DescargaEnc" targetRef="Merge_DescargaEnc" />
+    <bpmn:sequenceFlow id="Flow_A_70" sourceRef="C_DescarregarEnc" targetRef="A_Do_DescarregarEnc" />
+    <bpmn:sequenceFlow id="Flow_A_71" sourceRef="A_Do_DescarregarEnc" targetRef="Merge_DescargaEnc" />
+    <bpmn:sequenceFlow id="Flow_A_72" sourceRef="Merge_DescargaEnc" targetRef="C_RelX" />
+    <bpmn:sequenceFlow id="Flow_A_73" sourceRef="C_RelX" targetRef="Decision_RelSAV" />
+    <bpmn:sequenceFlow id="Flow_A_74" name="sim" sourceRef="Decision_RelSAV" targetRef="C_RelS">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">serv_executado</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_A_75" name="não" sourceRef="Decision_RelSAV" targetRef="Merge_RelSAV" />
+    <bpmn:sequenceFlow id="Flow_A_76" sourceRef="C_RelS" targetRef="Merge_RelSAV" />
+    <bpmn:sequenceFlow id="Flow_A_77" sourceRef="Merge_RelSAV" targetRef="C_End" />
+    <bpmn:sequenceFlow id="Flow_A_80" name="não" sourceRef="C_HaOperacoes" targetRef="Merge_Instr" />
+    <bpmn:sequenceFlow id="Flow_A_81" sourceRef="Merge_Instr" targetRef="Fork_Xstation" />
+    <bpmn:sequenceFlow id="Flow_A_82" name="sim" sourceRef="C_HaOps2" targetRef="A_If_FornecerPACK">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">ha_operacoes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmn:message id="Message_C_Start" name="Xoperation-plan recebido" />
+  <bpmn:message id="Message_C_ReceberSERV" name="SERVplan ou ausência recebida" />
+  <bpmn:message id="Message_A_ReceberTeste" name="Resultado automatizado recebido" />
+  <bpmndi:BPMNDiagram id="Diagram_VP3A">
+    <bpmndi:BPMNPlane id="Plane_VP3A" bpmnElement="Collaboration_VP3A">
+      <bpmndi:BPMNShape id="Pool_XoperationTeam_di" bpmnElement="Pool_XoperationTeam" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="8070" height="1020" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Auxiliar_di" bpmnElement="Lane_Auxiliar" isHorizontal="true">
+        <dc:Bounds x="190" y="800" width="8040" height="300" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Motorista_di" bpmnElement="Lane_Motorista" isHorizontal="true">
+        <dc:Bounds x="190" y="580" width="8040" height="220" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Coordenador_di" bpmnElement="Lane_Coordenador" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="8040" height="500" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_Plan_di" bpmnElement="DOR_Plan">
+        <dc:Bounds x="237" y="425" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="200" y="480" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_ServPlan_di" bpmnElement="DOR_ServPlan">
+        <dc:Bounds x="1092" y="425" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1055" y="480" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_RelX_di" bpmnElement="DOR_RelX">
+        <dc:Bounds x="7552" y="445" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="7515" y="500" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_RelS_di" bpmnElement="DOR_RelS">
+        <dc:Bounds x="7842" y="445" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="7805" y="500" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Start_di" bpmnElement="C_Start">
+        <dc:Bounds x="237" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="200" y="266" width="110" height="41" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Decision_CargaPACK_di" bpmnElement="Decision_CargaPACK" isMarkerVisible="true">
+        <dc:Bounds x="305" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="275" y="360" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_CarregarPACK_di" bpmnElement="C_CarregarPACK">
+        <dc:Bounds x="395" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Do_CarregarPACK_di" bpmnElement="A_Do_CarregarPACK">
+        <dc:Bounds x="575" y="860" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_CargaPACK_di" bpmnElement="Merge_CargaPACK" isMarkerVisible="true">
+        <dc:Bounds x="795" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_ConsultarSERV_di" bpmnElement="C_ConsultarSERV">
+        <dc:Bounds x="885" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_ReceberSERV_di" bpmnElement="C_ReceberSERV">
+        <dc:Bounds x="1092" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1055" y="266" width="110" height="41" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Decision_CargaEnc_di" bpmnElement="Decision_CargaEnc" isMarkerVisible="true">
+        <dc:Bounds x="1195" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1165" y="360" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_CarregarEnc_di" bpmnElement="C_CarregarEnc">
+        <dc:Bounds x="1285" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Do_CarregarEnc_di" bpmnElement="A_Do_CarregarEnc">
+        <dc:Bounds x="1465" y="860" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_CargaEnc_di" bpmnElement="Merge_CargaEnc" isMarkerVisible="true">
+        <dc:Bounds x="1685" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_MergePrep_di" bpmnElement="C_MergePrep" isMarkerVisible="true">
+        <dc:Bounds x="1785" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_VerificarPrep_di" bpmnElement="C_VerificarPrep">
+        <dc:Bounds x="1875" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_PrepCorreta_di" bpmnElement="C_PrepCorreta" isMarkerVisible="true">
+        <dc:Bounds x="2075" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2045" y="273" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_CorrigirCarga_di" bpmnElement="C_CorrigirCarga">
+        <dc:Bounds x="1875" y="430" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Do_CorrigirCarga_di" bpmnElement="A_Do_CorrigirCarga">
+        <dc:Bounds x="1875" y="860" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Partida_di" bpmnElement="C_Partida">
+        <dc:Bounds x="2175" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_ForkViagem_di" bpmnElement="C_ForkViagem">
+        <dc:Bounds x="2375" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Briefing_di" bpmnElement="C_Briefing">
+        <dc:Bounds x="2475" y="160" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="M_ConduzirIda_di" bpmnElement="M_ConduzirIda">
+        <dc:Bounds x="2475" y="650" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_JoinViagem_di" bpmnElement="C_JoinViagem">
+        <dc:Bounds x="2695" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Fork_Xstation_di" bpmnElement="Fork_Xstation">
+        <dc:Bounds x="3195" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_HaManut_di" bpmnElement="C_HaManut" isMarkerVisible="true">
+        <dc:Bounds x="3325" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3295" y="360" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Manut_di" bpmnElement="C_Manut">
+        <dc:Bounds x="3425" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_MergeManut_di" bpmnElement="C_MergeManut" isMarkerVisible="true">
+        <dc:Bounds x="3635" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_HaOperacoes_di" bpmnElement="C_HaOperacoes" isMarkerVisible="true">
+        <dc:Bounds x="2805" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2775" y="362" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Operacoes_di" bpmnElement="C_Operacoes">
+        <dc:Bounds x="2895" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_If_FornecerPACK_di" bpmnElement="A_If_FornecerPACK" isMarkerVisible="true">
+        <dc:Bounds x="3635" y="1015" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3595" y="1070" width="130" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_FornecerPACK_di" bpmnElement="A_FornecerPACK">
+        <dc:Bounds x="3735" y="1000" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Merge_FornecerPACK_di" bpmnElement="A_Merge_FornecerPACK" isMarkerVisible="true">
+        <dc:Bounds x="3935" y="1015" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_If_RecolherPACK_di" bpmnElement="A_If_RecolherPACK" isMarkerVisible="true">
+        <dc:Bounds x="4035" y="1015" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3995" y="1070" width="130" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_RecolherPACK_di" bpmnElement="A_RecolherPACK">
+        <dc:Bounds x="4135" y="1000" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Merge_RecolherPACK_di" bpmnElement="A_Merge_RecolherPACK" isMarkerVisible="true">
+        <dc:Bounds x="4335" y="1015" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_If_EntregarEnc_di" bpmnElement="A_If_EntregarEnc" isMarkerVisible="true">
+        <dc:Bounds x="4435" y="1015" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4395" y="1070" width="130" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_EntregarEnc_di" bpmnElement="A_EntregarEnc">
+        <dc:Bounds x="4535" y="1000" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Merge_EntregarEnc_di" bpmnElement="A_Merge_EntregarEnc" isMarkerVisible="true">
+        <dc:Bounds x="4735" y="1015" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_If_RecolherEnc_di" bpmnElement="A_If_RecolherEnc" isMarkerVisible="true">
+        <dc:Bounds x="4835" y="1015" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4795" y="1070" width="130" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_RecolherEnc_di" bpmnElement="A_RecolherEnc">
+        <dc:Bounds x="4935" y="1000" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Merge_RecolherEnc_di" bpmnElement="A_Merge_RecolherEnc" isMarkerVisible="true">
+        <dc:Bounds x="5135" y="1015" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_Ops_di" bpmnElement="Merge_Ops" isMarkerVisible="true">
+        <dc:Bounds x="5245" y="445" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Join_Xstation_di" bpmnElement="Join_Xstation">
+        <dc:Bounds x="5365" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_MergeTeste_di" bpmnElement="C_MergeTeste" isMarkerVisible="true">
+        <dc:Bounds x="5465" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Teste_di" bpmnElement="C_Teste">
+        <dc:Bounds x="5555" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_PedirTeste_di" bpmnElement="A_PedirTeste">
+        <dc:Bounds x="5725" y="860" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_ReceberTeste_di" bpmnElement="A_ReceberTeste">
+        <dc:Bounds x="5932" y="882" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5895" y="836" width="110" height="41" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_TesteOK_di" bpmnElement="C_TesteOK" isMarkerVisible="true">
+        <dc:Bounds x="6035" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5923" y="288" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_RepetirManut_di" bpmnElement="C_RepetirManut">
+        <dc:Bounds x="5715" y="160" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_MergeVerifOps_di" bpmnElement="C_MergeVerifOps" isMarkerVisible="true">
+        <dc:Bounds x="6145" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_VerificarOps_di" bpmnElement="C_VerificarOps">
+        <dc:Bounds x="6235" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_OpsCorretas_di" bpmnElement="C_OpsCorretas" isMarkerVisible="true">
+        <dc:Bounds x="6435" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6405" y="273" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_CorrigirOps_di" bpmnElement="C_CorrigirOps">
+        <dc:Bounds x="6235" y="430" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Do_CorrigirOps_di" bpmnElement="A_Do_CorrigirOps">
+        <dc:Bounds x="6235" y="860" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Regresso_di" bpmnElement="C_Regresso">
+        <dc:Bounds x="6535" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="M_ConduzirBase_di" bpmnElement="M_ConduzirBase">
+        <dc:Bounds x="6705" y="650" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Decision_DescargaEnc_di" bpmnElement="Decision_DescargaEnc" isMarkerVisible="true">
+        <dc:Bounds x="6915" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6803" y="288" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_DescarregarEnc_di" bpmnElement="C_DescarregarEnc">
+        <dc:Bounds x="7005" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A_Do_DescarregarEnc_di" bpmnElement="A_Do_DescarregarEnc">
+        <dc:Bounds x="7185" y="860" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_DescargaEnc_di" bpmnElement="Merge_DescargaEnc" isMarkerVisible="true">
+        <dc:Bounds x="7405" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_RelX_di" bpmnElement="C_RelX">
+        <dc:Bounds x="7495" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Decision_RelSAV_di" bpmnElement="Decision_RelSAV" isMarkerVisible="true">
+        <dc:Bounds x="7695" y="305" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="7665" y="360" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_RelS_di" bpmnElement="C_RelS">
+        <dc:Bounds x="7785" y="290" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_RelSAV_di" bpmnElement="Merge_RelSAV" isMarkerVisible="true">
+        <dc:Bounds x="7985" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_End_di" bpmnElement="C_End">
+        <dc:Bounds x="8092" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="8070" y="353" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_A_01_di" bpmnElement="Flow_A_01">
+        <di:waypoint x="273" y="330" />
+        <di:waypoint x="305" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_02_di" bpmnElement="Flow_A_02">
+        <di:waypoint x="355" y="330" />
+        <di:waypoint x="395" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="363" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_03_di" bpmnElement="Flow_A_03">
+        <di:waypoint x="330" y="305" />
+        <di:waypoint x="330" y="200" />
+        <di:waypoint x="820" y="200" />
+        <di:waypoint x="820" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="336" y="285" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_04_di" bpmnElement="Flow_A_04">
+        <di:waypoint x="545" y="330" />
+        <di:waypoint x="650" y="330" />
+        <di:waypoint x="650" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_05_di" bpmnElement="Flow_A_05">
+        <di:waypoint x="725" y="900" />
+        <di:waypoint x="820" y="900" />
+        <di:waypoint x="820" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_06_di" bpmnElement="Flow_A_06">
+        <di:waypoint x="845" y="330" />
+        <di:waypoint x="885" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_07_di" bpmnElement="Flow_A_07">
+        <di:waypoint x="1035" y="330" />
+        <di:waypoint x="1092" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_08_di" bpmnElement="Flow_A_08">
+        <di:waypoint x="1128" y="330" />
+        <di:waypoint x="1195" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_09_di" bpmnElement="Flow_A_09">
+        <di:waypoint x="1245" y="330" />
+        <di:waypoint x="1285" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1253" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_10_di" bpmnElement="Flow_A_10">
+        <di:waypoint x="1220" y="305" />
+        <di:waypoint x="1220" y="200" />
+        <di:waypoint x="1710" y="200" />
+        <di:waypoint x="1710" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1226" y="285" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_11_di" bpmnElement="Flow_A_11">
+        <di:waypoint x="1435" y="330" />
+        <di:waypoint x="1540" y="330" />
+        <di:waypoint x="1540" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_12_di" bpmnElement="Flow_A_12">
+        <di:waypoint x="1615" y="900" />
+        <di:waypoint x="1710" y="900" />
+        <di:waypoint x="1710" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_13_di" bpmnElement="Flow_A_13">
+        <di:waypoint x="1735" y="330" />
+        <di:waypoint x="1785" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_14_di" bpmnElement="Flow_A_14">
+        <di:waypoint x="1835" y="330" />
+        <di:waypoint x="1875" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_15_di" bpmnElement="Flow_A_15">
+        <di:waypoint x="2025" y="330" />
+        <di:waypoint x="2075" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_16_di" bpmnElement="Flow_A_16">
+        <di:waypoint x="2100" y="355" />
+        <di:waypoint x="2100" y="470" />
+        <di:waypoint x="2025" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2106" y="361" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_17_di" bpmnElement="Flow_A_17">
+        <di:waypoint x="1950" y="510" />
+        <di:waypoint x="1950" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_18_di" bpmnElement="Flow_A_18">
+        <di:waypoint x="1875" y="900" />
+        <di:waypoint x="1810" y="900" />
+        <di:waypoint x="1810" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_19_di" bpmnElement="Flow_A_19">
+        <di:waypoint x="2125" y="330" />
+        <di:waypoint x="2175" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2133" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_20_di" bpmnElement="Flow_A_20">
+        <di:waypoint x="2325" y="330" />
+        <di:waypoint x="2375" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_21_di" bpmnElement="Flow_A_21">
+        <di:waypoint x="2400" y="305" />
+        <di:waypoint x="2400" y="200" />
+        <di:waypoint x="2475" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_22_di" bpmnElement="Flow_A_22">
+        <di:waypoint x="2625" y="200" />
+        <di:waypoint x="2720" y="200" />
+        <di:waypoint x="2720" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_23_di" bpmnElement="Flow_A_23">
+        <di:waypoint x="2400" y="355" />
+        <di:waypoint x="2400" y="690" />
+        <di:waypoint x="2475" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_24_di" bpmnElement="Flow_A_24">
+        <di:waypoint x="2625" y="690" />
+        <di:waypoint x="2720" y="690" />
+        <di:waypoint x="2720" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_25_di" bpmnElement="Flow_A_25">
+        <di:waypoint x="2745" y="330" />
+        <di:waypoint x="2805" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_26_di" bpmnElement="Flow_A_26">
+        <di:waypoint x="3245" y="330" />
+        <di:waypoint x="3325" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_27_di" bpmnElement="Flow_A_27">
+        <di:waypoint x="3375" y="330" />
+        <di:waypoint x="3425" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3383" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_28_di" bpmnElement="Flow_A_28">
+        <di:waypoint x="3350" y="305" />
+        <di:waypoint x="3350" y="200" />
+        <di:waypoint x="3660" y="200" />
+        <di:waypoint x="3660" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3356" y="285" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_29_di" bpmnElement="Flow_A_29">
+        <di:waypoint x="3575" y="330" />
+        <di:waypoint x="3635" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_30_di" bpmnElement="Flow_A_30">
+        <di:waypoint x="3685" y="330" />
+        <di:waypoint x="5365" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_31_di" bpmnElement="Flow_A_31">
+        <di:waypoint x="3220" y="355" />
+        <di:waypoint x="3220" y="470" />
+        <di:waypoint x="3325" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_32_di" bpmnElement="Flow_A_32">
+        <di:waypoint x="2855" y="330" />
+        <di:waypoint x="2895" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2860" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_33_di" bpmnElement="Flow_A_33">
+        <di:waypoint x="3350" y="495" />
+        <di:waypoint x="3350" y="550" />
+        <di:waypoint x="5210" y="550" />
+        <di:waypoint x="5210" y="470" />
+        <di:waypoint x="5245" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3356" y="501" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_34_di" bpmnElement="Flow_A_34">
+        <di:waypoint x="3045" y="330" />
+        <di:waypoint x="3085" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_35_di" bpmnElement="Flow_A_35">
+        <di:waypoint x="3685" y="1040" />
+        <di:waypoint x="3735" y="1040" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3693" y="1020" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_36_di" bpmnElement="Flow_A_36">
+        <di:waypoint x="3885" y="1040" />
+        <di:waypoint x="3935" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_37_di" bpmnElement="Flow_A_37">
+        <di:waypoint x="3660" y="1015" />
+        <di:waypoint x="3660" y="965" />
+        <di:waypoint x="3960" y="965" />
+        <di:waypoint x="3960" y="1015" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3666" y="995" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_38_di" bpmnElement="Flow_A_38">
+        <di:waypoint x="3985" y="1040" />
+        <di:waypoint x="4035" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_39_di" bpmnElement="Flow_A_39">
+        <di:waypoint x="4085" y="1040" />
+        <di:waypoint x="4135" y="1040" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4093" y="1020" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_40_di" bpmnElement="Flow_A_40">
+        <di:waypoint x="4285" y="1040" />
+        <di:waypoint x="4335" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_41_di" bpmnElement="Flow_A_41">
+        <di:waypoint x="4060" y="1015" />
+        <di:waypoint x="4060" y="965" />
+        <di:waypoint x="4360" y="965" />
+        <di:waypoint x="4360" y="1015" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4066" y="995" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_42_di" bpmnElement="Flow_A_42">
+        <di:waypoint x="4385" y="1040" />
+        <di:waypoint x="4435" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_43_di" bpmnElement="Flow_A_43">
+        <di:waypoint x="4485" y="1040" />
+        <di:waypoint x="4535" y="1040" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4493" y="1020" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_44_di" bpmnElement="Flow_A_44">
+        <di:waypoint x="4685" y="1040" />
+        <di:waypoint x="4735" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_45_di" bpmnElement="Flow_A_45">
+        <di:waypoint x="4460" y="1015" />
+        <di:waypoint x="4460" y="965" />
+        <di:waypoint x="4760" y="965" />
+        <di:waypoint x="4760" y="1015" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4466" y="995" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_46_di" bpmnElement="Flow_A_46">
+        <di:waypoint x="4785" y="1040" />
+        <di:waypoint x="4835" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_47_di" bpmnElement="Flow_A_47">
+        <di:waypoint x="4885" y="1040" />
+        <di:waypoint x="4935" y="1040" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4893" y="1020" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_48_di" bpmnElement="Flow_A_48">
+        <di:waypoint x="5085" y="1040" />
+        <di:waypoint x="5135" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_49_di" bpmnElement="Flow_A_49">
+        <di:waypoint x="4860" y="1015" />
+        <di:waypoint x="4860" y="965" />
+        <di:waypoint x="5160" y="965" />
+        <di:waypoint x="5160" y="1015" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4866" y="995" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_50_di" bpmnElement="Flow_A_50">
+        <di:waypoint x="5185" y="1040" />
+        <di:waypoint x="5270" y="1040" />
+        <di:waypoint x="5270" y="495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_51_di" bpmnElement="Flow_A_51">
+        <di:waypoint x="5295" y="470" />
+        <di:waypoint x="5390" y="470" />
+        <di:waypoint x="5390" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_52_di" bpmnElement="Flow_A_52">
+        <di:waypoint x="5415" y="330" />
+        <di:waypoint x="5465" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_53_di" bpmnElement="Flow_A_53">
+        <di:waypoint x="5515" y="330" />
+        <di:waypoint x="5555" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_54_di" bpmnElement="Flow_A_54">
+        <di:waypoint x="5705" y="330" />
+        <di:waypoint x="5800" y="330" />
+        <di:waypoint x="5800" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_55_di" bpmnElement="Flow_A_55">
+        <di:waypoint x="5875" y="900" />
+        <di:waypoint x="5932" y="900" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_56_di" bpmnElement="Flow_A_56">
+        <di:waypoint x="5968" y="900" />
+        <di:waypoint x="6060" y="900" />
+        <di:waypoint x="6060" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_57_di" bpmnElement="Flow_A_57">
+        <di:waypoint x="6060" y="305" />
+        <di:waypoint x="6060" y="200" />
+        <di:waypoint x="5865" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6066" y="285" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_58_di" bpmnElement="Flow_A_58">
+        <di:waypoint x="5715" y="200" />
+        <di:waypoint x="5490" y="200" />
+        <di:waypoint x="5490" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_59_di" bpmnElement="Flow_A_59">
+        <di:waypoint x="6085" y="330" />
+        <di:waypoint x="6145" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6093" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_60_di" bpmnElement="Flow_A_60">
+        <di:waypoint x="6195" y="330" />
+        <di:waypoint x="6235" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_61_di" bpmnElement="Flow_A_61">
+        <di:waypoint x="6385" y="330" />
+        <di:waypoint x="6435" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_62_di" bpmnElement="Flow_A_62">
+        <di:waypoint x="6460" y="355" />
+        <di:waypoint x="6460" y="470" />
+        <di:waypoint x="6385" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6466" y="361" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_63_di" bpmnElement="Flow_A_63">
+        <di:waypoint x="6310" y="510" />
+        <di:waypoint x="6310" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_64_di" bpmnElement="Flow_A_64">
+        <di:waypoint x="6235" y="900" />
+        <di:waypoint x="6170" y="900" />
+        <di:waypoint x="6170" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_65_di" bpmnElement="Flow_A_65">
+        <di:waypoint x="6485" y="330" />
+        <di:waypoint x="6535" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6493" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_66_di" bpmnElement="Flow_A_66">
+        <di:waypoint x="6685" y="330" />
+        <di:waypoint x="6780" y="330" />
+        <di:waypoint x="6780" y="650" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_67_di" bpmnElement="Flow_A_67">
+        <di:waypoint x="6855" y="690" />
+        <di:waypoint x="6940" y="690" />
+        <di:waypoint x="6940" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_68_di" bpmnElement="Flow_A_68">
+        <di:waypoint x="6965" y="330" />
+        <di:waypoint x="7005" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6973" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_69_di" bpmnElement="Flow_A_69">
+        <di:waypoint x="6940" y="305" />
+        <di:waypoint x="6940" y="200" />
+        <di:waypoint x="7430" y="200" />
+        <di:waypoint x="7430" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6946" y="285" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_70_di" bpmnElement="Flow_A_70">
+        <di:waypoint x="7155" y="330" />
+        <di:waypoint x="7260" y="330" />
+        <di:waypoint x="7260" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_71_di" bpmnElement="Flow_A_71">
+        <di:waypoint x="7335" y="900" />
+        <di:waypoint x="7430" y="900" />
+        <di:waypoint x="7430" y="355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_72_di" bpmnElement="Flow_A_72">
+        <di:waypoint x="7455" y="330" />
+        <di:waypoint x="7495" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_73_di" bpmnElement="Flow_A_73">
+        <di:waypoint x="7645" y="330" />
+        <di:waypoint x="7695" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_74_di" bpmnElement="Flow_A_74">
+        <di:waypoint x="7745" y="330" />
+        <di:waypoint x="7785" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="7753" y="310" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_75_di" bpmnElement="Flow_A_75">
+        <di:waypoint x="7720" y="305" />
+        <di:waypoint x="7720" y="200" />
+        <di:waypoint x="8010" y="200" />
+        <di:waypoint x="8010" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="7726" y="285" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_76_di" bpmnElement="Flow_A_76">
+        <di:waypoint x="7935" y="330" />
+        <di:waypoint x="7985" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_77_di" bpmnElement="Flow_A_77">
+        <di:waypoint x="8035" y="330" />
+        <di:waypoint x="8092" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Annotation_NotaVista_VP3A_di" bpmnElement="Annotation_NotaVista_VP3A">
+        <dc:Bounds x="160" y="1130" width="1500" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DA_Plan_out_di" bpmnElement="DA_Plan_out">
+        <di:waypoint x="255" y="348" />
+        <di:waypoint x="255" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Plan_in_di" bpmnElement="DA_Plan_in">
+        <di:waypoint x="273" y="440" />
+        <di:waypoint x="440" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Serv_out_di" bpmnElement="DA_Serv_out">
+        <di:waypoint x="1110" y="348" />
+        <di:waypoint x="1110" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Serv_in_di" bpmnElement="DA_Serv_in">
+        <di:waypoint x="1128" y="440" />
+        <di:waypoint x="1330" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_RelX_in_di" bpmnElement="DA_RelX_in">
+        <di:waypoint x="7570" y="445" />
+        <di:waypoint x="7570" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_RelS_in_di" bpmnElement="DA_RelS_in">
+        <di:waypoint x="7860" y="445" />
+        <di:waypoint x="7860" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="C_HaOps2_di" bpmnElement="C_HaOps2" isMarkerVisible="true">
+        <dc:Bounds x="3325" y="445" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3295" y="413" width="110" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Merge_Instr_di" bpmnElement="Merge_Instr" isMarkerVisible="true">
+        <dc:Bounds x="3085" y="305" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_A_80_di" bpmnElement="Flow_A_80">
+        <di:waypoint x="2830" y="305" />
+        <di:waypoint x="2830" y="200" />
+        <di:waypoint x="3110" y="200" />
+        <di:waypoint x="3110" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2836" y="282" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_81_di" bpmnElement="Flow_A_81">
+        <di:waypoint x="3135" y="330" />
+        <di:waypoint x="3195" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_A_82_di" bpmnElement="Flow_A_82">
+        <di:waypoint x="3375" y="470" />
+        <di:waypoint x="3610" y="470" />
+        <di:waypoint x="3610" y="1040" />
+        <di:waypoint x="3635" y="1040" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3383" y="450" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

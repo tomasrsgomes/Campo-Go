@@ -130,6 +130,15 @@
   </folder>
   <folder name="Views" id="id-30d1700f56a440cb8ad9b20c854c29c7" type="diagrams">
     <element xsi:type="archimate:ArchimateDiagramModel" name="VP1 Final- Ecossistema, negócio e governação" id="id-f1090b730cae499b8e56d4f6c8516316">
+      <child xsi:type="archimate:Note" id="id-ddcd2b6ce9844daa96a768205b521907" textAlignment="1">
+        <bounds x="12" y="30" width="1240" height="160"/>
+        <content>VP1: Ecossistema, negócio e governação
+Âmbito: o XSYS como agrupamento de serviços de negócio, realizados pela Xmiddle e pela Xstation; SAV e SERVEX ficam fora da fronteira e são servidos pela intermediação.
+Pressupostos: a Xoperation-team executa o SERVplan como ator operacional do SAV, sem o SAV entrar no XSYS; o USER pode ser cliente ou trabalhador de SERVEX.
+Omissões: estrutura interna da Xmiddle e da Xstation (VP2, VP6) e SERVEX proposto (VP8).
+Relações: VP2 (componentes que realizam os serviços) e VP3 (processo da missão).
+Em aberto: o depósito e levantamento acede à Encomenda de Serviço; deve fazê-lo só por identificador, para não sugerir que o XSYS a gere?</content>
+      </child>
       <child xsi:type="archimate:DiagramObject" id="id-7e910fe6fe5f402085dcdeeb9a3b5229" targetConnections="id-4570d387075d468bb4dbae73f10655fa" textPosition="1" archimateElement="id-bca380f2ad8d4bff81421f07b5aacd1f">
         <bounds x="996" y="245" width="170" height="65"/>
       </child>
